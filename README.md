@@ -28,7 +28,7 @@ ikiwiki directives replaced by [hugo
 shortcodes](https://gohugo.io/content-management/shortcodes/).  There are a lot
 of [directives](https://ikiwiki.info/ikiwiki/directive/) out there and I only
 implemented replacements for some of them.  My test ikiwiki instance was the
-the [Tails](https://tails.boum.org) ikiwiki source, so I only mostly
+the [Tails](https://tails.boum.org) ikiwiki source, so I mostly
 implemented directives used there.  Merge requests or patches for additional
 directives are welcome- to add a replacement for a directive, look in the
 `directives` folder, all the replacement python modules inherit from the
