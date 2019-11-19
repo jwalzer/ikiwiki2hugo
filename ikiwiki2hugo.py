@@ -78,6 +78,37 @@ class Convert:
             return '<details>\n<summary>{}</summary>\n{}\n</details>'.format(text, details)
         return ''
 
+    def ikiwikilink(self, content):
+        openbrackets_re = re.compile(r'\[\[[^!]')
+        match = True
+        while match:
+            match = re.search(openbrackets_re, content)
+            if match:
+                print(match)
+                openingbracket = match.start()
+                closingbracket = match.start()
+                bracketcounter = 0
+                for i in range(openingbracket, len(content) - 1):
+                    if content[i] == '[' and content[i + 1] == '[':
+                        bracketcounter = bracketcounter + 1
+                    if content[i] == ']' and content[i + 1] == ']':
+                        bracketcounter = bracketcounter - 1
+                    if bracketcounter == 0:
+                        closingbracket = i
+                        break
+                if closingbracket > openingbracket:
+                    pipeindex = content.rfind('|', openingbracket, closingbracket)
+                    if pipeindex != -1:
+                        text = content[openingbracket + 2:pipeindex]
+                        target = content[pipeindex + 1:closingbracket].replace(' ', '_')
+                    else:
+                        text = content[openingbracket + 2:closingbracket]
+                        target = text.replace(' ', '_')
+                    content = content.replace(content[openingbracket:closingbracket + 2], "[{}]({})".format(text, target))
+                else:
+                    content = content.replace(content[openingbracket:closingbracket + 2], "[ [")
+        return content
+
     #####
     # convert the content
     #####
@@ -90,6 +121,7 @@ class Convert:
             instance = class_(self.firstlevel)
             content = instance.replace(content)
 
+        content = self.ikiwikilink(content)
         # here the order is important: we access the toggleable directives
         # in the toggle replacement function, so toglleablerepl, which
         # removes them, should only be called after togglere
@@ -199,6 +231,7 @@ class Wiki:
 
         converter = Convert(out)
         for file in newfiles:
+            print(file)
             newcontent = converter.ikiwiki2hugofrontmatter(file.read_text())
             newcontent = converter.ikiwiki2hugocontent(newcontent)
             file.write_text(newcontent)
