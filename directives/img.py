@@ -2,11 +2,11 @@ from . import Directive
 
 
 class Img(Directive):
-    regex = r'\[\[!img\s*"?(?P<path>\S+?)"?\s*(align="?(?P<alignment>.(?s)*?)"?\s*|size="?(?P<size>.(?s)*?)"?\s*|link="?(?P<link>.(?s)*?)"?\s*|class="?(?P<class>.(?s)*?)"?\s*|alt="(?P<alt>.(?s)*?)"\s*|caption="?(?P<caption>.(?s)*?)"?\s*)*\]\]'
+    regex = r'\[\[!img\s*"?(?P<src>\S+?)"?\s*(align="?(?P<alignment>.(?s)*?)"?\s*|size="?(?P<size>.(?s)*?)"?\s*|link="?(?P<link>.(?s)*?)"?\s*|class="?(?P<class>.(?s)*?)"?\s*|alt="(?P<alt>.(?s)*?)"\s*|caption="?(?P<caption>.(?s)*?)"?\s*)*\]\]'
 
     def newvalue(self, matchobj):
         namedarguments = {
-            'path': self.cleanvalue(matchobj.group('path')),
+            'src': self.cleanvalue(matchobj.group('src')),
             'alt': self.cleanvalue(matchobj.group('alt')),
             'caption': self.cleanvalue(matchobj.group('caption')),
             'class': self.cleanvalue(matchobj.group('class')),
