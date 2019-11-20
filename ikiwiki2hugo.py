@@ -84,7 +84,6 @@ class Convert:
         while match:
             match = re.search(openbrackets_re, content)
             if match:
-                print(match)
                 openingbracket = match.start()
                 closingbracket = match.start()
                 bracketcounter = 0
