@@ -1,0 +1,11 @@
+<div class="youtube">
+ <p>
+ <a href="http://www.youtube.com/watch?v={{.Get "vid" }}">https://youtu.be/{{.Get "vid" }}</a>
+ </p>
+ <object width="445" height="364" 
+     data="http://www.youtube-nocookie.com/v/{{.Get "vid" }}&fs=1&border=1" >
+  <param name="allowFullScreen" value="true" />
+  <param name="allowscriptaccess" value="always" />
+  <param name="movie" value="http://www.youtube-nocookie.com/v/<TMPL_VAR raw_v>&fs=1&border=1" />
+ </object>
+</div>
