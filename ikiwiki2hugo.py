@@ -193,6 +193,10 @@ class Convert:
         if descriptions:
             data['description'] = "".join(descriptions)
 
+        # remove title and description meta-tags
+        meta_tnd = re.compile(r'\[\[!meta (title|description)="(?P<title>.+?)" *\]\]')
+        content = meta_tnd.sub('', content)
+
         # when no meta tag for lastmod then use file mtime
         if not "lastmod" in data:
             stat=os.stat(file_handle)
