@@ -178,6 +178,17 @@ class Convert:
                 data[key] = value
         content = meta.sub('', content)
 
+        # replace [[!meta title...]] with a title
+        meta_title = re.compile(r'\[\[!meta title="(?P<title>.+?)" *\]\]')
+        titles = meta_title.findall(content)
+        if titles:
+            data['title'] = "".join(titles)
+
+        # replace [[!meta description...]] with a description
+        meta_description = re.compile(r'\[\[!meta description="(?P<description>.+?)" *\]\]')
+        descriptions = meta_description.findall(content)
+        if descriptions:
+            data['description'] = "".join(descriptions)
         return "{}{}\n{}".format(yaml.dump(data, indent=2, explicit_start=True, default_flow_style=False), '---', content)
 
 
