@@ -21,6 +21,8 @@ import sys
 import pkgutil
 import polib
 import yaml
+import os
+import time
 
 import directives
 
@@ -138,7 +140,7 @@ class Convert:
     # generate the hugo frontmatter
     #####
 
-    def ikiwiki2hugofrontmatter(self, content):
+    def ikiwiki2hugofrontmatter(self, content, file_stat):
         data = {}
 
         # replace [[!pagetemplate ...]] with a layout entry
@@ -189,6 +191,11 @@ class Convert:
         descriptions = meta_description.findall(content)
         if descriptions:
             data['description'] = "".join(descriptions)
+
+        # when no meta tag for lastmod then use file mtime
+        if not "lastmod" in data:
+            data['lastmod']=time.ctime(file_stat.st_mtime)
+
         return "{}{}\n{}".format(yaml.dump(data, indent=2, explicit_start=True, default_flow_style=False), '---', content)
 
 
@@ -227,6 +234,7 @@ class Wiki:
                 if markdown.name == 'index.md':
                     markdown = markdown.parent / '_index.md'
                 shutil.copy(file, markdown)
+                shutil.copystat(file, markdown)
                 for language in languages:
                     pofile = file.with_suffix('.' + language + '.po')
                     if pofile.exists():
@@ -236,13 +244,15 @@ class Wiki:
             if file.match('*.css') or file.match('*.png') or file.match('*.jpg'):
                 target = pathlib.Path(out / file.relative_to(self.path))
                 shutil.copy(file, target)
+                shutil.copystat(file, target)
 
         newfiles = pathlib.Path(outputdir).rglob('*.md')
 
         converter = Convert(out)
         for file in newfiles:
             print(file)
-            newcontent = converter.ikiwiki2hugofrontmatter(file.read_text())
+            stat=os.stat(file)
+            newcontent = converter.ikiwiki2hugofrontmatter(file.read_text(),stat)
             newcontent = converter.ikiwiki2hugocontent(newcontent)
             file.write_text(newcontent)
 
