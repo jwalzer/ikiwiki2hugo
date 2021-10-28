@@ -152,9 +152,10 @@ class Convert:
 
         # replace [[!tag ...]] with an array of tags
         tag = re.compile(r'\[\[!tag (?P<tag>.+)\]\]')
-        tags = tag.findall(content)
-        if tags:
-            data['tags'] = tags
+        taglist = tag.findall(content)
+        if taglist:
+
+            data['tags'] = " ".join(taglist).split()
         content = tag.sub('', content)
 
         # replace [[!meta stylesheet...]] with a stylesheets array
