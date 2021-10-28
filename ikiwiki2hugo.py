@@ -140,7 +140,7 @@ class Convert:
     # generate the hugo frontmatter
     #####
 
-    def ikiwiki2hugofrontmatter(self, content, file_stat):
+    def ikiwiki2hugofrontmatter(self, content, file_handle):
         data = {}
 
         # replace [[!pagetemplate ...]] with a layout entry
@@ -195,7 +195,11 @@ class Convert:
 
         # when no meta tag for lastmod then use file mtime
         if not "lastmod" in data:
-            data['lastmod']=time.ctime(file_stat.st_mtime)
+            stat=os.stat(file_handle)
+            data['lastmod']=time.ctime(stat.st_mtime)
+
+        if not "title" in data:
+            data['title']=".".join((((file_handle.parts)[-1].split('.'))[:-1]))
 
         return "{}{}\n{}".format(yaml.dump(data, indent=2, explicit_start=True, default_flow_style=False), '---', content)
 
@@ -252,8 +256,7 @@ class Wiki:
         converter = Convert(out)
         for file in newfiles:
             print(file)
-            stat=os.stat(file)
-            newcontent = converter.ikiwiki2hugofrontmatter(file.read_text(),stat)
+            newcontent = converter.ikiwiki2hugofrontmatter(file.read_text(),file)
             newcontent = converter.ikiwiki2hugocontent(newcontent)
             file.write_text(newcontent)
 
